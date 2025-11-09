@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+database:
+  host: localhost
+  port: 5432
+  user: admin
+  password: secret
+  name: myappdb
+
+routes:
+  - name: CodeShare
+    route:
+      - path: /CodeShare
+        destination: http://localhost:8081/CodeShare
+        weight: 3
+      - path: /CodeShare
+        destination: http://localhost:8082/CodeShare
+        weight: 2
+      - path: /CodeShare
+        destination: http://localhost:8083/CodeShare
+        weight: 1
