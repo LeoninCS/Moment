@@ -1,15 +1,11 @@
-package CodeShare
+package service
 
 import (
-	"context"
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"sync"
 	"time"
-
-	"github.com/redis/go-redis/v9"
 )
 
 const (
@@ -29,26 +25,13 @@ type CodeShare struct {
 	mu    sync.RWMutex
 	store map[string]*Code
 	order []string
-
-	rdb *redis.Client
-	ctx context.Context
 }
 
-func New(redisAddr, redisPass string, redisDB int) *CodeShare {
-	var rdb *redis.Client
-	if redisAddr != "" {
-		rdb = redis.NewClient(&redis.Options{
-			Addr:     redisAddr,
-			Password: redisPass,
-			DB:       redisDB,
-		})
-	}
+func NewCodeShareService() *CodeShare {
 
 	cs := &CodeShare{
 		store: make(map[string]*Code),
 		order: make([]string, 0, MaxEntries),
-		rdb:   rdb,
-		ctx:   context.Background(),
 	}
 
 	go func() {
@@ -91,13 +74,6 @@ func (cs *CodeShare) Upload(author, lang, content string, ttl int64) *Code {
 	cs.store[hash] = code
 	cs.order = append(cs.order, hash)
 
-	// 同步写入 Redis
-	if cs.rdb != nil {
-		data, _ := json.Marshal(code)
-		expire := time.Duration(ttl) * time.Second
-		cs.rdb.Set(cs.ctx, "code:"+hash, data, expire)
-	}
-
 	return code
 }
 
@@ -109,24 +85,6 @@ func (cs *CodeShare) Get(hash string) (*Code, bool) {
 
 	if ok && time.Now().Unix() <= code.DestroyTime {
 		return code, true
-	}
-
-	// 本地没有，从 Redis 拉取
-	if cs.rdb != nil {
-		val, err := cs.rdb.Get(cs.ctx, "code:"+hash).Result()
-		if err == nil {
-			var c Code
-			if json.Unmarshal([]byte(val), &c) == nil {
-				if time.Now().Unix() <= c.DestroyTime {
-					// 放回内存缓存
-					cs.mu.Lock()
-					cs.store[hash] = &c
-					cs.order = append(cs.order, hash)
-					cs.mu.Unlock()
-					return &c, true
-				}
-			}
-		}
 	}
 
 	return nil, false
