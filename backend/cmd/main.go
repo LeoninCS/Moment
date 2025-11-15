@@ -9,6 +9,6 @@ import (
 func main() {
 	h := handler.NewHandler()
 
-	log.Println("listen on :8080")
-	http.ListenAndServe(":8080", h)
+	log.Println("listen on 127.0.0.1:8080") // 可选：修改提示
+	http.ListenAndServe("127.0.0.1:8080", h)
 }
