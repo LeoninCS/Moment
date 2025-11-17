@@ -40,15 +40,6 @@ func NewHandler() http.Handler {
 		cg.GET("/code/:hash", codeHandler.Get)
 	}
 
-	// TextCrypto 分组
-	textHandler := NewTextCryptoHandler()
-	tg := r.Group("/textcrypto")
-	{
-		tg.GET("/random-screat-key", textHandler.RandomScreatKey)
-		tg.POST("/encrypt-text", textHandler.Encrypt)
-		tg.POST("/decrypt-text", textHandler.Decrypt)
-	}
-
 	// WorkPlan 分组
 	workPlanHandler := NewWorkPlanHandler()
 	wg := r.Group("/workplan")

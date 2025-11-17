@@ -1,9 +1,7 @@
+// 并发安全 + TTL + 基于 FIFO slice 实现的LRU
 package service
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
-	"fmt"
 	"sync"
 	"time"
 )
@@ -13,18 +11,18 @@ const (
 	MaxContentSize = 100000
 )
 
+type CodeShare struct {
+	mu    sync.RWMutex
+	store map[string]*Code
+	order []string
+}
+
 type Code struct {
 	Author      string `json:"author"`
 	Language    string `json:"language"`
 	Content     string `json:"content"`
 	Hash        string `json:"hash"`
 	DestroyTime int64  `json:"destroy_time"`
-}
-
-type CodeShare struct {
-	mu    sync.RWMutex
-	store map[string]*Code
-	order []string
 }
 
 func NewCodeShareService() *CodeShare {
@@ -35,7 +33,7 @@ func NewCodeShareService() *CodeShare {
 	}
 
 	go func() {
-		for range time.Tick(3 * time.Hour) {
+		for range time.Tick(3 * time.Minute) {
 			cs.cleanExpired()
 		}
 	}()
@@ -50,10 +48,15 @@ func (cs *CodeShare) Upload(author, lang, content string, ttl int64) *Code {
 	}
 
 	destroy := time.Now().Unix() + ttl
-	data := fmt.Sprintf("%s|%s|%s|%d", author, lang, content, destroy)
-	hashBytes := sha256.Sum256([]byte(data))
-	hash := hex.EncodeToString(hashBytes[:])
+	/*
+		目前用户较少，暂时不使用复杂的哈希算法，因为后缀过长
+		data := fmt.Sprintf("%s|%s|%s|%d", author, lang, content, destroy)
+		hashBytes := sha256.Sum256([]byte(data))
+		hash := hex.EncodeToString(hashBytes[:])
+	*/
+	// 简单哈希
 
+	hash := GetHash(10)
 	code := &Code{
 		Author:      author,
 		Language:    lang,
@@ -79,9 +82,22 @@ func (cs *CodeShare) Upload(author, lang, content string, ttl int64) *Code {
 
 // 获取
 func (cs *CodeShare) Get(hash string) (*Code, bool) {
-	cs.mu.RLock()
+	cs.mu.Lock()
 	code, ok := cs.store[hash]
-	cs.mu.RUnlock()
+
+	if ok {
+		// 1. 从 order 中移除旧位置
+		for i := range cs.order {
+			if cs.order[i] == hash {
+				cs.order = append(cs.order[:i], cs.order[i+1:]...)
+				break
+			}
+		}
+		// 2. 放到末尾（表示最近使用）
+		cs.order = append(cs.order, hash)
+	}
+
+	cs.mu.Unlock()
 
 	if ok && time.Now().Unix() <= code.DestroyTime {
 		return code, true
