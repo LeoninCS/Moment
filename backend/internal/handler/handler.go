@@ -49,5 +49,17 @@ func NewHandler() http.Handler {
 		tg.POST("/decrypt-text", textHandler.Decrypt)
 	}
 
+	// WorkPlan 分组
+	workPlanHandler := NewWorkPlanHandler()
+	wg := r.Group("/workplan")
+	{
+		wg.GET("/new", workPlanHandler.NewPlan)
+		wg.POST("/add", workPlanHandler.AddTODO)
+		wg.POST("/delete", workPlanHandler.DeleteTODO)
+		wg.POST("/edit", workPlanHandler.EditTODO)
+		wg.POST("/done", workPlanHandler.SetDone)
+		wg.GET("/todos/:hash", workPlanHandler.GetTODOs)
+	}
+
 	return r
 }
