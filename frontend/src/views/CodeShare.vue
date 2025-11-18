@@ -139,7 +139,7 @@ async function handleSubmit() {
     shareUrl.value = finalUrl;
 
     // 自动跳转到查看页（类似 pastebin）
-    router.push(`/c/${hash}`);
+    router.push(`/code/${hash}`);
   } catch (err) {
     console.error(err);
     alert("提交失败，请检查后端是否已启动 /api/codeshare/upload");
