@@ -1,10 +1,10 @@
-# 🌟 Moment
+# 🌟 DevDesk
 
 [![Go Version](https://img.shields.io/badge/Go-1.24.5%2B-00ADD8?logo=go&logoColor=white)](https://go.dev/)
 [![Vue Version](https://img.shields.io/badge/Vue-3.4%2B-42b883?logo=vue.js&logoColor=white)](https://vuejs.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Stars](https://img.shields.io/github/stars/LeoninCS/Moment?style=social)](https://github.com/LeoninCS/Moment/stargazers)
-[![Issues](https://img.shields.io/github/issues/LeoninCS/Moment.svg)](https://github.com/LeoninCS/Moment/issues)
+[![Stars](https://img.shields.io/github/stars/LeoninCS/DevDesk?style=social)](https://github.com/LeoninCS/DevDesk/stargazers)
+[![Issues](https://img.shields.io/github/issues/LeoninCS/DevDesk.svg)](https://github.com/LeoninCS/DevDesk/issues)
 
 ---
 ## [功能演示](https://www.bilibili.com/video/BV1RoC7BJEeZ?vd_source=7ef1f5a4e0294748f7a212f3d8c485da)
@@ -41,12 +41,12 @@
 2. **克隆项目到本地：**
    
    ```bash
-   git clone https://github.com/yourusername/Moment.git
+   git clone https://github.com/yourusername/DevDesk.git
    ```
 3. **进入项目目录：**
    
    ```bash
-   cd Moment
+   cd DevDesk
    cd backend
    ```
 4. **安装项目依赖：**
