@@ -2,9 +2,9 @@
 
 [![Go Version](https://img.shields.io/badge/Go-1.24.5%2B-00ADD8?logo=go&logoColor=white)](https://go.dev/)
 [![Vue Version](https://img.shields.io/badge/Vue-3.4%2B-42b883?logo=vue.js&logoColor=white)](https://vuejs.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Stars](https://img.shields.io/github/stars/LeoninCS/DevDesk?style=social)](https://github.com/LeoninCS/DevDesk/stargazers)
-[![Issues](https://img.shields.io/github/issues/LeoninCS/DevDesk.svg)](https://github.com/LeoninCS/DevDesk/issues)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Stars](https://badgen.net/github/stars/LeoninCS/DevDesk?icon=github)](https://github.com/LeoninCS/DevDesk/stargazers)
+[![Issues](https://badgen.net/github/issues/LeoninCS/DevDesk?icon=github)](https://github.com/LeoninCS/DevDesk/issues)
 
 ---
 ## [功能演示](https://www.bilibili.com/video/BV1RoC7BJEeZ?vd_source=7ef1f5a4e0294748f7a212f3d8c485da)
@@ -66,3 +66,6 @@
 
 1. 确保项目已成功启动。  
 2. 打开浏览器，访问 `http://localhost:5173`测试即可。
+## 📈 Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=LeoninCS/DevDesk&type=Date)](https://star-history.com/#LeoninCS/DevDesk&Date)
