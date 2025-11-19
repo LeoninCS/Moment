@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: devdesk-backend
+    restart: always
+    ports:
+      - "8080:8080"    # 如果只想内部用可以去掉这一行
+    environment:
+      - GIN_MODE=release   # 如果你用 gin，或者换成你实际的环境变量
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: devdesk-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "80:80"        # 对外只暴露 80 端口
