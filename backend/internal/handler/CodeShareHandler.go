@@ -18,7 +18,7 @@ func NewCodeShareHandler(cs *service.CodeShare) *CodeShareHandler {
 
 // POST /codeshare/upload
 func (h *CodeShareHandler) Upload(c *gin.Context) {
-	var req uploadRequest {
+	var req struct {
 		Author   string `json:"author"   binding:"required"`
 		Language string `json:"language" binding:"required"`
 		Content  string `json:"content"  binding:"required"`
