@@ -4,7 +4,7 @@
     <div class="sidebar" :class="{ collapsed }">
       <!-- 顶部标题区 -->
       <div class="top-bar">
-        <div class="title" @click="goHome">Moment</div>
+        <div class="title" @click="goHome">DevDesk</div>
 
         <a
           class="github"
