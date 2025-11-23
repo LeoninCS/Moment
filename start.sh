@@ -20,7 +20,7 @@ cd backend
 (
   cd ../frontend
   npm install
-  npm run dev
+  npm run dev -- --host 0.0.0.0 --port 5173
 ) & FE_PID=$!
 
 echo
