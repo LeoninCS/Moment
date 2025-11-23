@@ -81,6 +81,7 @@ const features = [
   { name: "codeshare", label: "代码分享", path: "/codeshare" },
   { name: "workplan", label: "待办事项", path: "/workplan" },
   { name: "c", label: "功能 C", path: "/feature-c" },
+  { name: "markdown", label: "Markdown 编辑器", path: "/markdown" },
 ];
 
 const search = ref("");
