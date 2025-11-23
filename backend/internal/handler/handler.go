@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"moment/internal/service"
+	"DevDesk/internal/service"
 
 	"github.com/gin-gonic/gin"
 )
