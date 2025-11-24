@@ -13,7 +13,7 @@
 
 
 ---
-## [功能演示](https://www.bilibili.com/video/BV1RoC7BJEeZ?vd_source=7ef1f5a4e0294748f7a212f3d8c485da)
+## [功能演示](https://b23.tv/ZZQ79DS)
 ## 效果演示
 ![alt text](/picture/image.png)
 ![alt text](/picture/image-1.png)
