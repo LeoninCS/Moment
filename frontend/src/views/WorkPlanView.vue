@@ -473,4 +473,24 @@ onMounted(() => {
     width: 100%;
   }
 }
+
+@media (max-width: 620px) {
+  .wpv-card {
+    padding: 16px 12px 18px;
+  }
+
+  .wpv-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .wpv-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .wpv-check {
+    margin-top: 2px;
+  }
+}
 </style>

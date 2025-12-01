@@ -1,8 +1,12 @@
 <template>
   <div class="container" :data-theme="theme">
-    <!-- 左侧边栏 -->
-    <div class="sidebar" :class="{ collapsed }">
-      <!-- 顶部标题区 -->
+    <div
+      v-if="isMobile && isMobileMenuOpen"
+      class="sidebar-mask"
+      @click="closeMobileMenu"
+    ></div>
+
+    <div class="sidebar" :class="sidebarClass">
       <div class="top-bar">
         <div class="title" @click="goHome">DevDesk</div>
 
@@ -11,7 +15,7 @@
           href="https://github.com/LeoninCS/Moment"
           target="_blank"
         >
-          <svg viewBox="0 0 16 16" width="20" height="20">
+          <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true">
             <path
               fill="currentColor"
               d="M8 0C3.58 0 0 3.58 0 8a8 8 0 005.47 7.59c.4.07.55-.17.55-.38 
@@ -27,22 +31,30 @@
           </svg>
         </a>
 
-        <button class="toggle-btn" @click="collapsed = !collapsed">
-          {{ collapsed ? "→" : "←" }}
-        </button>
+        <div class="sidebar-actions">
+          <button class="toggle-btn" @click="toggleSidebar">
+            {{
+              isMobile
+                ? isMobileMenuOpen
+                  ? "收起"
+                  : "展开"
+                : sidebarCollapsed
+                ? "展开"
+                : "收起"
+            }}
+          </button>
+        </div>
       </div>
 
-      <!-- 搜索栏 -->
       <input
-        v-if="!collapsed"
+        v-if="showSidebarContent"
         v-model="search"
         type="text"
         class="search"
         placeholder="搜索功能..."
       />
 
-      <!-- 菜单列表 -->
-      <ul class="menu" v-if="!collapsed">
+      <ul class="menu" v-if="showSidebarContent">
         <li
           v-for="item in filteredList"
           :key="item.name"
@@ -54,41 +66,47 @@
       </ul>
     </div>
 
-    <!-- 右侧内容区 -->
     <div class="content">
       <div class="header">
+        <button
+          v-if="isMobile"
+          class="mobile-menu-btn"
+          aria-label="展开菜单"
+          @click="openMobileMenu"
+        >
+          ☰ 菜单
+        </button>
         <button class="theme-btn" @click="toggleTheme">
           {{ theme === "light" ? "🌙 深色" : "☀️ 浅色" }}
         </button>
       </div>
 
-      <!-- 这里改成路由出口 -->
       <router-view />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRouter, useRoute } from "vue-router";
 
 const router = useRouter();
 const route = useRoute();
 
-// 功能列表：用 path 来驱动路由
 const features = [
   { name: "home", label: "关于本站", path: "/" },
   { name: "codeshare", label: "代码分享", path: "/codeshare" },
   { name: "workplan", label: "待办事项", path: "/workplan" },
-  { name: "markdown", label: "Markdown 编辑器", path: "/markdown" },
+  { name: "markdown", label: "Markdown 编辑", path: "/markdown" },
   { name: "httptest", label: "HTTP 接口测试", path: "/httptest" },
 ];
 
 const search = ref("");
-const collapsed = ref(false);
-const theme = ref("light"); // 默认主题
+const theme = ref("light");
+const sidebarCollapsed = ref(false);
+const isMobile = ref(false);
+const isMobileMenuOpen = ref(false);
 
-// 搜索过滤
 const filteredList = computed(() => {
   if (!search.value) return features;
   return features.filter((f) =>
@@ -96,47 +114,81 @@ const filteredList = computed(() => {
   );
 });
 
-// 当前菜单是否激活
+const sidebarClass = computed(() => ({
+  collapsed: sidebarCollapsed.value && !isMobile.value,
+  mobile: isMobile.value,
+  "mobile-open": isMobileMenuOpen.value,
+}));
+
+const showSidebarContent = computed(
+  () =>
+    (!sidebarCollapsed.value || isMobile.value) &&
+    (!isMobile.value || isMobileMenuOpen.value)
+);
+
 function isActive(item) {
-  // 简单按 path 匹配；如果希望 /code/:hash 也高亮“代码分享”，可以在这里加逻辑
   return route.path === item.path;
 }
 
-// 点击功能项 —— 跳转路由
 function selectFeature(item) {
   router.push(item.path);
+  closeMobileMenu();
 }
 
-// 回到首页
 function goHome() {
   router.push("/");
+  closeMobileMenu();
 }
 
-// 切换主题
 function toggleTheme() {
   theme.value = theme.value === "light" ? "dark" : "light";
 }
+
+function toggleSidebar() {
+  if (isMobile.value) {
+    isMobileMenuOpen.value = !isMobileMenuOpen.value;
+    return;
+  }
+  sidebarCollapsed.value = !sidebarCollapsed.value;
+}
+
+function openMobileMenu() {
+  isMobileMenuOpen.value = true;
+}
+
+function closeMobileMenu() {
+  if (isMobile.value) {
+    isMobileMenuOpen.value = false;
+  }
+}
+
+const handleResize = () => {
+  isMobile.value = window.innerWidth <= 920;
+  if (!isMobile.value) {
+    isMobileMenuOpen.value = false;
+  }
+};
+
+onMounted(() => {
+  handleResize();
+  window.addEventListener("resize", handleResize);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("resize", handleResize);
+});
 </script>
 
-<!-- 注意：这里不再加 scoped -->
 <style>
-/* =========================================
-   布局基础
-========================================= */
 .container {
+  position: relative;
   display: flex;
   width: 100%;
-  min-height: 100vh;      /* 新的：至少占满一屏 */
-  /* height: 100%;        删掉 */
-  /* overflow: hidden;    删掉，不然纵向滚动全没了 */
+  min-height: 100vh;
   background: var(--bg);
   color: var(--text);
 }
 
-
-/* =========================================
-   主题系统
-========================================= */
 :root {
   --bg: #f5f6fa;
   --sidebar: #dad7d7;
@@ -157,9 +209,14 @@ function toggleTheme() {
   --content-bg: #090d1d;
 }
 
-/* =========================================
-   左侧 Sidebar
-========================================= */
+.sidebar-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(1px);
+  z-index: 8;
+}
+
 .sidebar {
   width: 260px;
   background: var(--sidebar);
@@ -167,33 +224,48 @@ function toggleTheme() {
   padding: 16px;
   display: flex;
   flex-direction: column;
-  transition: width 0.25s, padding 0.25s;
-  box-shadow: 2px 0 6px rgba(0,0,0,0.05);
+  transition: width 0.25s, padding 0.25s, transform 0.25s ease;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.05);
+  z-index: 9;
 }
 
-/* 折叠状态 */
-.sidebar.collapsed {
+.sidebar.mobile {
+  position: fixed;
+  inset: 0 auto 0 0;
+  transform: translateX(-100%);
+  max-width: 86vw;
+  width: 280px;
+  height: 100%;
+  overflow-y: auto;
+  border-right: none;
+  box-shadow: 10px 0 30px rgba(0, 0, 0, 0.25);
+}
+
+.sidebar.mobile.mobile-open {
+  transform: translateX(0);
+}
+
+.sidebar.collapsed:not(.mobile) {
   width: 64px;
   padding: 16px 8px;
 }
 
-/* 折叠时隐藏多余元素，只保留按钮 */
-.sidebar.collapsed .title,
-.sidebar.collapsed .github,
-.sidebar.collapsed .search,
-.sidebar.collapsed .menu {
+.sidebar.collapsed:not(.mobile) .title,
+.sidebar.collapsed:not(.mobile) .github,
+.sidebar.collapsed:not(.mobile) .search,
+.sidebar.collapsed:not(.mobile) .menu {
   display: none;
 }
 
-.sidebar.collapsed .top-bar {
+.sidebar.collapsed:not(.mobile) .top-bar {
   justify-content: center;
 }
 
-/* 顶部区域 */
 .top-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
 }
 
 .title {
@@ -208,17 +280,25 @@ function toggleTheme() {
   margin-left: 10px;
 }
 
+.sidebar-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .toggle-btn {
-  margin-left: 10px;
-  padding: 4px 6px;
+  padding: 6px 10px;
   cursor: pointer;
   border: 1px solid var(--border);
   background: var(--sidebar);
-  border-radius: 4px;
+  border-radius: 6px;
   color: var(--text);
 }
 
-/* 搜索框 */
+.toggle-btn.ghost {
+  background: transparent;
+}
+
 .search {
   padding: 10px;
   border-radius: 8px;
@@ -233,7 +313,6 @@ function toggleTheme() {
   border-color: var(--active);
 }
 
-/* 菜单 */
 .menu {
   list-style: none;
   padding: 0;
@@ -261,9 +340,6 @@ function toggleTheme() {
   color: white;
 }
 
-/* =========================================
-   右侧内容
-========================================= */
 .content {
   flex-grow: 1;
   padding: 26px;
@@ -277,6 +353,8 @@ function toggleTheme() {
 .header {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
   margin-bottom: 16px;
 }
 
@@ -292,5 +370,40 @@ function toggleTheme() {
 
 .theme-btn:hover {
   background: var(--hover);
+}
+
+.mobile-menu-btn {
+  display: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--sidebar);
+  color: var(--text);
+}
+
+@media (max-width: 1100px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .content {
+    padding: 20px 18px;
+  }
+}
+
+@media (max-width: 920px) {
+  .content {
+    padding: 16px 14px 22px;
+  }
+
+  .header {
+    justify-content: space-between;
+  }
+
+  .mobile-menu-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
 }
 </style>

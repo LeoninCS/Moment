@@ -263,7 +263,7 @@ ${bodyContent}
 
 const exportPdf = async () => {
   if (!previewRef.value) {
-    alert("预览区未就绪，稍后再试");
+    alert("预览区未就绪，稍后再试。");
     return;
   }
   exporting.value = true;
@@ -374,8 +374,7 @@ onBeforeUnmount(() => {
   flex-direction: column;
   box-sizing: border-box;
   width: 100%;
-  height: calc(100vh - 120px);
-  max-height: none;
+  min-height: calc(100vh - 140px);
   border: 1px solid #e5e7eb;
 }
 
@@ -455,6 +454,8 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .mde-status-box {
@@ -480,6 +481,7 @@ onBeforeUnmount(() => {
 .mde-export-group {
   display: flex;
   gap: 4px;
+  flex-wrap: wrap;
 }
 
 .mde-btn {
@@ -611,21 +613,32 @@ onBeforeUnmount(() => {
   text-decoration: underline;
 }
 
+@media (max-width: 1024px) {
+  .mde-card {
+    min-height: calc(100vh - 100px);
+  }
+}
+
 @media (max-width: 900px) {
   .mde-card {
-    height: auto;
+    min-height: auto;
   }
   .mde-header {
     flex-direction: column;
     align-items: flex-start;
   }
-  .mde-header-right {
-    align-self: stretch;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-  }
   .mde-main {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 640px) {
+  .mde-card {
+    padding: 14px 12px 16px;
+  }
+
+  .mde-header-right {
+    justify-content: flex-start;
   }
 }
 </style>

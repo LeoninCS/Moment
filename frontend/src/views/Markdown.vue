@@ -30,7 +30,7 @@
           </p>
 
           <p v-if="hash" class="md-hint">
-            已生成文档：<code>{{ hash }}</code>，正在跳转到编辑页面。
+            已生成文档：<code>{{ hash }}</code>，正在跳转到编辑页面...
           </p>
         </div>
       </div>
@@ -310,6 +310,22 @@ const handleStart = async () => {
   .md-hero-preview {
     order: -1;
     margin-bottom: 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .md-hero {
+    padding: 18px 14px 20px;
+    gap: 20px;
+  }
+
+  .md-title {
+    font-size: 26px;
+  }
+
+  .md-start-btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 </style>

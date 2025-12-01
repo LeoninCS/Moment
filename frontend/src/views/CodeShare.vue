@@ -1,7 +1,7 @@
 <template>
   <div class="cs-page">
     <section class="cs-hero">
-      <div>
+      <div class="hero-text">
         <p class="eyebrow">CodeShare</p>
         <h1>生成可分享的代码片段</h1>
         <p class="sub">
@@ -9,8 +9,8 @@
         </p>
         <div class="chips">
           <span class="chip">语法高亮</span>
-          <span class="chip">临时/短链</span>
-          <span class="chip">便捷复制</span>
+          <span class="chip">临时 / 短链</span>
+          <span class="chip">一键复制</span>
         </div>
       </div>
       <div class="hero-card">
@@ -35,20 +35,20 @@
         </div>
         <div v-if="shareUrl" class="share-chip">
           <span>已生成链接</span>
-          <a :href="shareUrl" target="_blank">{{ shareUrl }}</a>
+          <a :href="shareUrl" target="_blank" rel="noreferrer">{{ shareUrl }}</a>
         </div>
       </header>
 
       <form @submit.prevent="handleSubmit">
         <div class="row">
           <div class="field">
-            <label>发布者</label>
+            <label>发布人</label>
             <input
               v-model="form.poster"
               placeholder="你的昵称"
               maxlength="30"
             />
-            <small>可为空，最长 30 个字符</small>
+            <small>可为空，最多 30 个字符</small>
           </div>
 
           <div class="field">
@@ -75,7 +75,7 @@
                 {{ opt.label }}
               </option>
             </select>
-            <small>大致时间，实际以后端配置为准</small>
+            <small>大致时间，以后端配置为准</small>
           </div>
         </div>
 
@@ -85,7 +85,7 @@
             v-model="form.content"
             rows="14"
             placeholder="在这里输入或粘贴代码..."
-          />
+          ></textarea>
         </div>
 
         <div class="actions">
@@ -95,7 +95,7 @@
 
           <span v-if="shareUrl" class="share-url">
             分享链接：
-            <a :href="shareUrl" target="_blank">{{ shareUrl }}</a>
+            <a :href="shareUrl" target="_blank" rel="noreferrer">{{ shareUrl }}</a>
           </span>
         </div>
       </form>
@@ -187,7 +187,7 @@ async function handleSubmit() {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 8px 6px 24px;
+  padding: 10px 8px 24px;
   box-sizing: border-box;
 }
 
@@ -200,6 +200,12 @@ async function handleSubmit() {
   grid-template-columns: 1.5fr 1fr;
   gap: 14px;
   align-items: center;
+}
+
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .eyebrow {
@@ -417,9 +423,9 @@ textarea {
   }
 }
 
-@media (max-width: 768px) {
-  .row {
-    grid-template-columns: 1fr;
+@media (max-width: 780px) {
+  .cs-page {
+    padding: 10px 6px 22px;
   }
 
   .cs-card-head {
@@ -427,8 +433,32 @@ textarea {
     align-items: flex-start;
   }
 
+  .row {
+    grid-template-columns: 1fr;
+  }
+
   .hero-card {
-    justify-content: center;
+    justify-content: space-around;
+  }
+}
+
+@media (max-width: 520px) {
+  .cs-hero {
+    padding: 16px 14px;
+    gap: 10px;
+  }
+
+  .cs-hero h1 {
+    font-size: 22px;
+  }
+
+  textarea {
+    min-height: 40vh;
+  }
+
+  .actions button {
+    width: 100%;
+    text-align: center;
   }
 }
 </style>

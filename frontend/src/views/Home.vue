@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="home">
     <h1>欢迎使用 DevDesk</h1>
-    <p>请选择左侧的功能开始使用。</p>
+    <p class="lead">请选择左侧的功能开始使用。</p>
 
     <section>
       <h2>功能介绍</h2>
@@ -18,8 +18,10 @@
 
       <h3>Markdown 编辑器</h3>
       <p>
-        点击开始，左侧为编辑区，右侧可预览，可通过链接协同合作，但请注意需要刷新网页才可看到别人更新的内容，同时该功能支持导出 Markdown、HTML、PDF 格式。
-      </p>      <h3>线上代码编辑器（待开发）</h3>
+        点击开始，左侧为编辑区，右侧可预览，可通过链接协同合作。该功能支持导出 Markdown、HTML、PDF 格式。
+      </p>
+
+      <h3>线上代码编辑器（待开发）</h3>
       <p>
         提供在线编写、运行和调试代码的环境，支持多种主流语言和代码高亮、自动保存等功能，当前功能正在开发中。
       </p>
@@ -39,9 +41,19 @@ export default {
 </script>
 
 <style scoped>
+.home {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 8px 10px 18px;
+}
+
 h1 {
   font-size: 24px;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
+}
+
+.lead {
+  margin: 0 0 10px;
 }
 
 h2 {
@@ -57,5 +69,19 @@ h3 {
 p {
   margin: 8px 0;
   line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .home {
+    padding: 6px 6px 16px;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
 }
 </style>

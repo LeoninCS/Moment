@@ -279,5 +279,31 @@ const handleStart = async () => {
   .wp-hero {
     grid-template-columns: 1fr;
   }
+
+  .wp-card {
+    max-width: 420px;
+    width: 100%;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .workplan-page {
+    padding: 18px 8px 24px;
+  }
+
+  .wp-hero {
+    gap: 18px;
+    padding: 18px 16px 20px;
+  }
+
+  .wp-title {
+    font-size: 24px;
+  }
+
+  .wp-start-btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
 </style>

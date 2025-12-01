@@ -18,7 +18,7 @@
       </div>
       <div class="hero-meta">
         <div class="meta-row">
-          <span class="label">发布者</span>
+          <span class="label">发布人</span>
           <span class="value">{{ author || "匿名" }}</span>
         </div>
         <div class="meta-row">
@@ -265,6 +265,7 @@ async function copyLink() {
   justify-content: space-between;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .label {
@@ -274,6 +275,7 @@ async function copyLink() {
 
 .value {
   font-weight: 700;
+  word-break: break-word;
 }
 
 .csv-card {
@@ -387,9 +389,18 @@ async function copyLink() {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 720px) {
+  .csv-page {
+    padding: 10px 6px 20px;
+  }
+
   .csv-card {
     padding: 12px;
+  }
+
+  .card-head {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 </style>

@@ -1075,7 +1075,44 @@ onMounted(() => {
   }
 }
 
+@media (max-width: 900px) {
+  .hero {
+    padding: 18px 16px;
+  }
+
+  .request-area {
+    padding: 12px;
+  }
+
+  .request-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .request-row.secondary {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .req-item {
+    flex-direction: column;
+  }
+
+  .req-actions {
+    justify-content: flex-end;
+  }
+
+  .header-row {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+  }
+}
+
 @media (max-width: 640px) {
+  .hero-actions {
+    align-items: stretch;
+  }
+
   .request-row {
     flex-direction: column;
     align-items: stretch;
