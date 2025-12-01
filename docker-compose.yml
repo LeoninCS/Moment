@@ -1,12 +1,18 @@
 version: "3.9"
 
 services:
-  cloudflared:
-    image: cloudflare/cloudflared
-    container_name: cloudflared
-    restart: always
-    network_mode: host
-    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+ cloudflared:
+  image: cloudflare/cloudflared
+  container_name: cloudflared
+  restart: always
+  network_mode: host
+  command: >
+    tunnel
+    --no-autoupdate
+    --protocol http2
+    run
+    --token ${CLOUDFLARE_TUNNEL_TOKEN}
+
   backend:
     build:
       context: ./backend
