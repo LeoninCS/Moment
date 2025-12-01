@@ -7,6 +7,7 @@ import WorkPlan from '../views/WorkPlan.vue'
 import WorkPlanView from '../views/WorkPlanView.vue'
 import Markdown from '../views/Markdown.vue';
 import MarkdownEditorView from '../views/MarkdownEditorView.vue';
+import HttpTest from '../views/HttpTest.vue';
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
@@ -39,6 +40,11 @@ const routes: RouteRecordRaw[] = [
   name: "MarkdownEditorView",
   component: MarkdownEditorView,
   props: true,
+  },
+  {
+    path: "/httptest",
+    name: "HttpTest",
+    component: HttpTest,
   },
   {
     path: '/code/:hash',
