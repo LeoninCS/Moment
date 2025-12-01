@@ -12,11 +12,36 @@
           <button class="btn ghost" :disabled="!requests.length" @click="exportWorkspace">
             导出 JSON
           </button>
-          <label class="btn ghost import-btn">
+          <button class="btn ghost" @click="toggleImportPanel">
             导入 JSON
-            <input ref="fileInput" type="file" accept="application/json" @change="handleImportFile" />
-          </label>
+          </button>
           <span class="muted">数据会自动存到浏览器，不怕刷新</span>
+        </div>
+        <div v-if="showImportPanel" class="import-panel">
+          <div class="import-actions">
+            <button class="btn primary small" @click="triggerFileSelect">文件导入</button>
+            <button class="btn ghost small" @click="startTextImport">文本导入</button>
+            <button class="btn light small" @click="toggleImportPanel">关闭</button>
+          </div>
+          <input
+            ref="fileInput"
+            class="hidden-file"
+            type="file"
+            accept="application/json"
+            @change="handleImportFile"
+          />
+          <div v-if="showTextImport" class="import-text">
+            <textarea
+              v-model="importText"
+              rows="3"
+              placeholder="粘贴导出的 workspace JSON 到这里，然后点击「文本导入」"
+            ></textarea>
+            <div class="import-actions">
+              <button class="btn primary small" @click="importFromText" :disabled="!importText.trim()">
+                文本导入
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </header>
@@ -214,6 +239,9 @@ const sending = ref(false);
 const sendError = ref("");
 const importError = ref("");
 const fileInput = ref<HTMLInputElement | null>(null);
+const importText = ref("");
+const showImportPanel = ref(false);
+const showTextImport = ref(false);
 
 const activeRequest = computed(
   () => requests.value.find((r) => r.id === activeId.value) || null
@@ -457,28 +485,65 @@ function handleImportFile(e: Event) {
   reader.onload = () => {
     try {
       const parsed = JSON.parse(String(reader.result || "{}"));
-      if (!Array.isArray(parsed.requests)) {
-        throw new Error("File format error: requests is missing");
-      }
-      const list = parsed.requests
-        .map((r: any) => normalizeRequest(r))
-        .filter(Boolean) as WorkspaceRequest[];
-      if (!list.length) throw new Error("No request data found");
-      requests.value = list;
-      const firstId = parsed.activeId || list[0]?.id;
-      if (firstId) {
-        selectRequest(firstId);
-      } else {
-        activeId.value = "";
-        latestResponse.value = null;
-      }
+      applyImportedWorkspace(parsed);
     } catch (err: any) {
       importError.value = err?.message || "Import failed, please check JSON";
     } finally {
       if (fileInput.value) fileInput.value.value = "";
+      showImportPanel.value = false;
+      showTextImport.value = false;
     }
   };
   reader.readAsText(file);
+}
+
+function importFromText() {
+  importError.value = "";
+  if (!importText.value.trim()) return;
+  try {
+    const parsed = JSON.parse(importText.value);
+    applyImportedWorkspace(parsed);
+    importText.value = "";
+    showImportPanel.value = false;
+    showTextImport.value = false;
+  } catch (err: any) {
+    importError.value = err?.message || "导入失败，请检查 JSON 文本";
+  }
+}
+
+function triggerFileSelect() {
+  importError.value = "";
+  fileInput.value?.click();
+}
+
+function startTextImport() {
+  importError.value = "";
+  showTextImport.value = true;
+}
+
+function toggleImportPanel() {
+  showImportPanel.value = !showImportPanel.value;
+  if (!showImportPanel.value) {
+    showTextImport.value = false;
+  }
+}
+
+function applyImportedWorkspace(parsed: any) {
+  if (!Array.isArray(parsed?.requests)) {
+    throw new Error("文件格式错误：缺少 requests");
+  }
+  const list = parsed.requests
+    .map((r: any) => normalizeRequest(r))
+    .filter(Boolean) as WorkspaceRequest[];
+  if (!list.length) throw new Error("没有可用的请求数据");
+  requests.value = list;
+  const firstId = parsed.activeId || list[0]?.id;
+  if (firstId) {
+    selectRequest(firstId);
+  } else {
+    activeId.value = "";
+    latestResponse.value = null;
+  }
 }
 
 onMounted(() => {
@@ -882,9 +947,31 @@ onMounted(() => {
   color: var(--text);
 }
 
+.btn.light {
+  background: #f8fafc;
+  color: #0f172a;
+  border: 1px solid #d1d5db;
+}
+
 .hero .btn.ghost {
   border-color: rgba(255, 255, 255, 0.5);
   color: #f8fafc;
+}
+
+.import-text {
+  margin-top: 10px;
+}
+
+.import-text textarea {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.18);
+  color: #f8fafc;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 13px;
+  font-family: "JetBrains Mono", Consolas, monospace;
+  resize: vertical;
 }
 
 .import-btn {
@@ -896,6 +983,27 @@ onMounted(() => {
   inset: 0;
   opacity: 0;
   cursor: pointer;
+}
+
+.import-panel {
+  margin-top: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.import-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.hidden-file {
+  display: none;
 }
 
 .icon-btn {
